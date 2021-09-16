@@ -24,6 +24,7 @@ from absl import logging
 
 from clu import platform
 import train
+import train_blocking
 import jax
 from ml_collections import config_flags
 import tensorflow as tf
@@ -56,8 +57,8 @@ def main(argv):
   platform.work_unit().create_artifact(platform.ArtifactType.DIRECTORY,
                                        FLAGS.workdir, 'workdir')
 
-  train.train_and_evaluate(FLAGS.config, FLAGS.workdir)
-
+  #train.train_and_evaluate(FLAGS.config, FLAGS.workdir)
+  train_blocking.train_and_evaluate(FLAGS.config, FLAGS.workdir)
 
 if __name__ == '__main__':
   flags.mark_flags_as_required(['config', 'workdir'])
