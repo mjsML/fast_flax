@@ -384,5 +384,5 @@ def train_and_evaluate(config: ml_collections.ConfigDict,
   
   # Wait until file writes are done before exiting
   if jax.process_index() == 0:
-    futures= [f.result() for f in futures]
+    now= [f.result() for f in futures]
   return state
