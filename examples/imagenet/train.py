@@ -210,7 +210,7 @@ def save_checkpoint(state, workdir):
     # get train state from the first replica
     state = jax.device_get(jax.tree_map(lambda x: x[0], state))
     step = int(state.step)
-    checkpoints.save_checkpoint(workdir, state, step, keep=3)
+    return checkpoints.save_checkpoint(workdir, state, step, keep=3,blocking=False)
 
 
 # pmean only works inside pmap because it needs an axis name.
@@ -266,7 +266,7 @@ def train_and_evaluate(config: ml_collections.ConfigDict,
       logdir=workdir, just_logging=jax.host_id() != 0)
 
   rng = random.PRNGKey(0)
-
+  futures=[]
   image_size = 224
 
   if config.batch_size % jax.device_count() > 0:
@@ -375,9 +375,10 @@ def train_and_evaluate(config: ml_collections.ConfigDict,
       writer.flush()
     if (step + 1) % steps_per_checkpoint == 0 or step + 1 == num_steps:
       state = sync_batch_stats(state)
-      save_checkpoint(state, workdir)
+      future=save_checkpoint(state, workdir)
+      futures.append(future)
 
   # Wait until computations are done before exiting
   jax.random.normal(jax.random.PRNGKey(0), ()).block_until_ready()
-
+  futures= [f.result() for f in futures]
   return state
