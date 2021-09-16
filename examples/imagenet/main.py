@@ -58,7 +58,7 @@ def main(argv):
                                        FLAGS.workdir, 'workdir')
 
   #train.train_and_evaluate(FLAGS.config, FLAGS.workdir)
-  train_blocking.train_and_evaluate(FLAGS.config, FLAGS.workdir)
+  train.train_and_evaluate(FLAGS.config, FLAGS.workdir)
 
 if __name__ == '__main__':
   flags.mark_flags_as_required(['config', 'workdir'])
