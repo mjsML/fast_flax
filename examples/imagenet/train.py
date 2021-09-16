@@ -375,10 +375,14 @@ def train_and_evaluate(config: ml_collections.ConfigDict,
       writer.flush()
     if (step + 1) % steps_per_checkpoint == 0 or step + 1 == num_steps:
       state = sync_batch_stats(state)
-      future=save_checkpoint(state, workdir)
-      futures.append(future)
+      if jax.process_index() == 0:
+        future = save_checkpoint(state, workdir)
+        futures.append(future)
 
   # Wait until computations are done before exiting
   jax.random.normal(jax.random.PRNGKey(0), ()).block_until_ready()
-  futures= [f.result() for f in futures]
+  
+  # Wait until file writes are done before exiting
+  if jax.process_index() == 0:
+    futures= [f.result() for f in futures]
   return state
