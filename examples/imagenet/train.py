@@ -307,7 +307,7 @@ def train_and_evaluate(config: ml_collections.ConfigDict,
   else:
     steps_per_eval = config.steps_per_eval
 
-  steps_per_checkpoint = steps_per_epoch # save checkpoint every epoch for debugging
+  steps_per_checkpoint = steps_per_epoch *10 
 
   base_learning_rate = config.learning_rate * config.batch_size / 256.
 
