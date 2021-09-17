@@ -209,12 +209,12 @@ def save_checkpoint(ckpt_dir: Union[str, os.PathLike],
       return _save_checkpoint(**_kwargs)
     else:
       # if blocking is False, we will return the handle to the future.
-      # NOTE: we set the max_workers to 1 because the work is serial but we want to have it done asynchronously.
+      # NOTE: we set the max_workers to 2 because the work is serial but we want to have it done asynchronously.
       logging.info('writing in non-blocked mode')
       if overwrite and not blocking:
          logging.info('overwriting with non-blocking mode is not supported')
          raise errors.OverwriteWithNonBlockingError(step)
-      executor=thread.ThreadPoolExecutor(max_workers=1)
+      executor=thread.ThreadPoolExecutor(max_workers=2)
       future = executor.submit(_save_checkpoint, **_kwargs)
       logging.info('Dispatched the write operation, returning to compute thread now.')
       return future
