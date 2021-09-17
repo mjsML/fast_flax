@@ -210,7 +210,7 @@ def save_checkpoint(state, workdir):
     # get train state from the first replica
     state = jax.device_get(jax.tree_map(lambda x: x[0], state))
     step = int(state.step)
-    return checkpoints.save_checkpoint(workdir, state, step, keep=3,blocking=False)
+    checkpoints.save_checkpoint(workdir, state, step, keep=3,blocking=False)
 
 
 # pmean only works inside pmap because it needs an axis name.
@@ -375,14 +375,9 @@ def train_and_evaluate(config: ml_collections.ConfigDict,
       writer.flush()
     if (step + 1) % steps_per_checkpoint == 0 or step + 1 == num_steps:
       state = sync_batch_stats(state)
-      if jax.process_index() == 0:
-        future = save_checkpoint(state, workdir)
-        futures.append(future)
+      save_checkpoint(state, workdir)
+        
 
   # Wait until computations are done before exiting
   jax.random.normal(jax.random.PRNGKey(0), ()).block_until_ready()
-  
-  # Wait until file writes are done before exiting
-  if jax.process_index() == 0:
-    now= [f.result() for f in futures]
   return state

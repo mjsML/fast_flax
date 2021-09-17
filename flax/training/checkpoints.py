@@ -217,7 +217,7 @@ def save_checkpoint(ckpt_dir: Union[str, os.PathLike],
       executor=thread.ThreadPoolExecutor()
       future = executor.submit(_save_checkpoint, **_kwargs)
       logging.info('Dispatched the write operation, returning to compute thread now.')
-      return future
+      future.add_done_callback(lambda future: logging.info('Write operation completed.'))
 
 
 def latest_checkpoint(ckpt_dir: Union[str, os.PathLike],
