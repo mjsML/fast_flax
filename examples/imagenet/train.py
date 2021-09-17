@@ -376,8 +376,6 @@ def train_and_evaluate(config: ml_collections.ConfigDict,
     if (step + 1) % steps_per_checkpoint == 0 or step + 1 == num_steps:
       state = sync_batch_stats(state)
       save_checkpoint(state, workdir)
-      if jax.process_index() == 0:
-        logging.info('save_checkpoint exited, back to compute.')
 
   # Wait until computations are done before exiting
   jax.random.normal(jax.random.PRNGKey(0), ()).block_until_ready()
