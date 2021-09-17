@@ -20,7 +20,7 @@ checkpoint files.
 """
 
 from concurrent.futures._base import Future
-from concurrent.futures import thread
+from concurrent.futures import thread,ProcessPoolExecutor
 import os
 import re
 from typing import Any, Iterable, List, Optional, Union
@@ -214,7 +214,7 @@ def save_checkpoint(ckpt_dir: Union[str, os.PathLike],
       if overwrite and not blocking:
          logging.info('overwriting with non-blocking mode is not supported')
          raise errors.OverwriteWithNonBlockingError(step)
-      executor=thread.ThreadPoolExecutor(max_workers=2)
+      executor=ProcessPoolExecutor(max_workers=2)
       future = executor.submit(_save_checkpoint, **_kwargs)
       logging.info('Dispatched the write operation, returning to compute thread now.')
       return future
