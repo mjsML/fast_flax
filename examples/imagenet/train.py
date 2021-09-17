@@ -337,6 +337,7 @@ def train_and_evaluate(config: ml_collections.ConfigDict,
   logging.info('Initial compilation, this might take some minutes...')
   for step, batch in zip(range(step_offset, num_steps), train_iter):
     state, metrics = p_train_step(state, batch)
+    logging.info(f'Done with compute for step :{step}')
     for h in hooks:
       h(step)
     if step == step_offset:
@@ -376,6 +377,7 @@ def train_and_evaluate(config: ml_collections.ConfigDict,
     if (step + 1) % steps_per_checkpoint == 0 or step + 1 == num_steps:
       state = sync_batch_stats(state)
       save_checkpoint(state, workdir)
+      logging.info('save_checkpoint exited, resuming compute.')
 
   # Wait until computations are done before exiting
   jax.random.normal(jax.random.PRNGKey(0), ()).block_until_ready()
