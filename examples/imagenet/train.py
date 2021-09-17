@@ -337,7 +337,7 @@ def train_and_evaluate(config: ml_collections.ConfigDict,
   logging.info('Initial compilation, this might take some minutes...')
   for step, batch in zip(range(step_offset, num_steps), train_iter):
     state, metrics = p_train_step(state, batch)
-    logging.info(f'Done with compute for step :{step}')
+    logging.info(f'Done with compute for step :{step} on host: {jax.process_index()}')
     for h in hooks:
       h(step)
     if step == step_offset:
