@@ -215,7 +215,7 @@ def save_checkpoint(ckpt_dir: Union[str, os.PathLike],
          raise errors.OverwriteWithNonBlockingError(step)
       executor=thread.ThreadPoolExecutor()
       future = executor.submit(_save_checkpoint, **_kwargs)
-      future.add_done_callback(lambda future: logging.info(f'Writing checkpoint for step: {step} is completed.'))
+      future.add_done_callback(lambda future: logging.info(f'Writing checkpoint is completed.'))
 
 
 def latest_checkpoint(ckpt_dir: Union[str, os.PathLike],
