@@ -213,7 +213,7 @@ def save_checkpoint(ckpt_dir: Union[str, os.PathLike],
       if overwrite and not blocking:
          logging.info('Overwriting with non-blocking mode is not supported')
          raise errors.OverwriteWithNonBlockingError(step)
-      executor=thread.ThreadPoolExecutor()
+      executor=thread.ThreadPoolExecutor(max_workers=2)
       future = executor.submit(_save_checkpoint, **_kwargs)
       future.add_done_callback(lambda future: logging.info('Writing checkpoint is completed.'))
 
